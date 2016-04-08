@@ -8,6 +8,7 @@
 
 import Foundation
 import AVFoundation
+import Accelerate
 
 class SplitterPlayer : NSObject {
     
@@ -70,8 +71,25 @@ class SplitterPlayer : NSObject {
         
     }
     
-    func FFT( audio_data:Array<Float>, bin_size:Float, sample_rate:Double, size:Int){
+    public func fft(input: [Float]) -> [Float] {
+        var real = [Float](input)
+        var imaginary = [Float](count: input.count, repeatedValue: 0.0)
+        var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
         
+        let length = vDSP_Length(floor(log2(Float(input.count))))
+        let radix = FFTRadix(kFFTRadix2)
+        let weights = vDSP_create_fftsetup(length, radix)
+        vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+        
+        var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
+        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
+        
+        var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
+        vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [2.0 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
+        
+        vDSP_destroy_fftsetup(weights)
+        
+        return normalizedMagnitudes
     }
     
 }
