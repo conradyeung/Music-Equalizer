@@ -17,6 +17,10 @@ class ViewController: UIViewController {
         var arr_out = player.fft(arr)
         print(arr_out)
         // Do any additional setup after loading the view, typically from a nib.
+        
+        player.readFilesIntoNodes("Plastik", file_extension: "wav")
+        player.split_audio_into_subnodes()
+        player.playNodes()
     }
 
     override func didReceiveMemoryWarning() {
