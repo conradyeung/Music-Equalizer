@@ -17,15 +17,8 @@ class SplitterPlayer : NSObject {
     var audio_engine: AVAudioEngine = AVAudioEngine()
     var master_player: AVAudioPlayerNode = AVAudioPlayerNode()
     var master_buffer: AVAudioPCMBuffer?
-    
-    var buffer_1: AVAudioPCMBuffer!
-    var buffer_2: AVAudioPCMBuffer!
-    var buffer_3: AVAudioPCMBuffer!
-    var buffer_4: AVAudioPCMBuffer!
-    var buffer_5: AVAudioPCMBuffer!
-    var buffer_6: AVAudioPCMBuffer!
-    var buffer_7: AVAudioPCMBuffer!
-    var buffer_8: AVAudioPCMBuffer!
+
+    var sub_buffers: [AVAudioPCMBuffer]!
     
     let FFT_size:UInt32 = 1024
     
@@ -42,14 +35,9 @@ class SplitterPlayer : NSObject {
         try! file.readIntoBuffer(master_buffer!)
         
         //Initialize sub_buffers
-        buffer_1 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_2 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_3 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_4 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_5 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_6 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_7 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
-        buffer_8 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        for i in 0...sub_buffers.count{
+            sub_buffers[i] = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        }
         
         //Record File Information
         self.sample_rate = file.fileFormat.sampleRate
@@ -85,14 +73,9 @@ class SplitterPlayer : NSObject {
             let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*segment_size], count:((i+1)*segment_size) - 1 )))
             for j in 0...(FFT_size-1){
                 //master_buffer!.floatChannelData.memory[(i*FFT_size)+j] = temp[j]
-                buffer_1.floatChannelData.memory[(i*segment_size)+j] = temp[0][j]
-                buffer_2.floatChannelData.memory[(i*segment_size)+j] = temp[1][j]
-                buffer_3.floatChannelData.memory[(i*segment_size)+j] = temp[2][j]
-                buffer_4.floatChannelData.memory[(i*segment_size)+j] = temp[3][j]
-                buffer_5.floatChannelData.memory[(i*segment_size)+j] = temp[4][j]
-                buffer_6.floatChannelData.memory[(i*segment_size)+j] = temp[5][j]
-                buffer_7.floatChannelData.memory[(i*segment_size)+j] = temp[6][j]
-                buffer_8.floatChannelData.memory[(i*segment_size)+j] = temp[7][j]
+                for i in 0...sub_buffers.count{
+                    sub_buffers[k].floatChannelData.memory[(i*segment_size)+j] = temp[0][j]
+                }
             }
         }
         
