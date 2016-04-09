@@ -66,15 +66,15 @@ class SplitterPlayer : NSObject {
         
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
         
-        let segment_size = Int(FFT_size)
+        let FFT_size = 1024
         
         // This will split the file into segments of size FFT_size
-        for i in 0...(file_length/segment_size){
-            let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*segment_size], count:((i+1)*segment_size) - 1 )))
+        for i in 0...(file_length/FFT_size){
+            let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*FFT_size], count:((i+1)*FFT_size) - 1 )))
             for j in 0...(FFT_size-1){
                 //master_buffer!.floatChannelData.memory[(i*FFT_size)+j] = temp[j]
-                for i in 0...sub_buffers.count{
-                    sub_buffers[k].floatChannelData.memory[(i*segment_size)+j] = temp[0][j]
+                for k in 0...sub_buffers.count{
+                    sub_buffers[k].floatChannelData.memory[(i*FFT_size)+j] = temp[0][j]
                 }
             }
         }
