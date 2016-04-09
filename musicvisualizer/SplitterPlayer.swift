@@ -145,34 +145,33 @@ class SplitterPlayer : NSObject {
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
         
         /*if(band == 7){
-            for i in 0...(7*input.count/8){
-                splitComplex.realp[i] = 0
-                splitComplex.imagp[i] = 0
-            }
-        }else if(band == 0){
-            for i in (input.count/8)...(input.count-1){
-                splitComplex.realp[i] = 0
-                splitComplex.imagp[i] = 0
-            }
-        }else{
-            for i in 0...(band*input.count/8){
-                splitComplex.realp[i] = 0
-                splitComplex.imagp[i] = 0
-            }
-            for i in ((band+1)*input.count/8)...(input.count-1){
-                splitComplex.realp[i] = 0
-                splitComplex.imagp[i] = 0
-            }
+        for i in 0...(7*input.count/8){
+        splitComplex.realp[i] = 0
+        splitComplex.imagp[i] = 0
         }
-        */
+        }else if(band == 0){
+        for i in (input.count/8)...(input.count-1){
+        splitComplex.realp[i] = 0
+        splitComplex.imagp[i] = 0
+        }
+        }else{
+        for i in 0...(band*input.count/8){
+        splitComplex.realp[i] = 0
+        splitComplex.imagp[i] = 0
+        }
+        for i in ((band+1)*input.count/8)...(input.count-1){
+        splitComplex.realp[i] = 0
+        splitComplex.imagp[i] = 0
+        }
+        }*/
+        
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))
         
-        var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
-        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
-        
+        //var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
+        //vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
         
         var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
-        vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [1/Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
+        vDSP_vsmul(splitComplex.realp, 1, [1 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
         
         vDSP_destroy_fftsetup(weights)
         
