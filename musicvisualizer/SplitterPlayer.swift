@@ -19,7 +19,7 @@ class SplitterPlayer : NSObject {
     var master_buffer: AVAudioPCMBuffer?
     
     var sample_rate: Double?
-    var file_length: Int64 = 0
+    var file_length: Int = 0
     
     func readFilesIntoNodes( file_name: String, file_extension: String ) {
         
@@ -32,7 +32,7 @@ class SplitterPlayer : NSObject {
     
         //Record File Information
         self.sample_rate = file.fileFormat.sampleRate
-        self.file_length = file.length
+        self.file_length = (Int)file.length
         
         //Connecting player node to the audio engine and starting it
         let mixer = audio_engine.mainMixerNode
@@ -54,9 +54,8 @@ class SplitterPlayer : NSObject {
     
     //Splits master_buffer into its frequencies
     func split_audio_into_subnodes(){
-        print("IN\n")
+        
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
-        print("floatArray \(original_data)\n")
         
         //Must be a power of two, this is the size of the sample we take of the audio at a time
         let FFT_size = 2048
@@ -69,6 +68,11 @@ class SplitterPlayer : NSObject {
         // Bin size is dependent on the FFT_size and sample rate
         let bin_size = (self.sample_rate!/(Double)(FFT_size))
         
+        let new_data = fft(original_data)
+        
+        for i in 0...file_length{
+            master_buffer!.floatChannelData.memory[i] = new_data[i]
+        }
     }
     
     public func fft(input: [Float]) -> [Float] {
