@@ -18,6 +18,17 @@ class SplitterPlayer : NSObject {
     var master_player: AVAudioPlayerNode = AVAudioPlayerNode()
     var master_buffer: AVAudioPCMBuffer?
     
+    var buffer_1: AVAudioPCMBuffer!
+    var buffer_2: AVAudioPCMBuffer!
+    var buffer_3: AVAudioPCMBuffer!
+    var buffer_4: AVAudioPCMBuffer!
+    var buffer_5: AVAudioPCMBuffer!
+    var buffer_6: AVAudioPCMBuffer!
+    var buffer_7: AVAudioPCMBuffer!
+    var buffer_8: AVAudioPCMBuffer!
+    
+    let FFT_size:UInt32 = 1024
+    
     var sample_rate: Double?
     var file_length: Int = 0
     
@@ -29,6 +40,16 @@ class SplitterPlayer : NSObject {
         let format = AVAudioFormat(commonFormat: .PCMFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: file.fileFormat.channelCount, interleaved: false)
         master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(file.length))
         try! file.readIntoBuffer(master_buffer!)
+        
+        //Initialize sub_buffers
+        buffer_1 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_2 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_3 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_4 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_5 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_6 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_7 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        buffer_8 = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
         
         //Record File Information
         self.sample_rate = file.fileFormat.sampleRate
@@ -49,7 +70,7 @@ class SplitterPlayer : NSObject {
     }
     
     func playNodes(){
-        master_player.play()
+        //master_player.play()
     }
     
     //Splits master_buffer into its frequencies
@@ -58,15 +79,22 @@ class SplitterPlayer : NSObject {
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
         
         //Must be a power of two, this is the size of the sample we take of the audio at a time
-        let FFT_size = 2048
+        let FFT_size = 1024
         
-        //Frequencies go from 0 to Fs
-        // where Fs = the sample rate of the original audio
-        // However, only half the frequencies are useable so we take those values
-        let max_freq = self.sample_rate! / 2.0
-        
-        // Bin size is dependent on the FFT_size and sample rate
-        let bin_size = (self.sample_rate!/(Double)(FFT_size))
+        for i in 0...(file_length/FFT_size){
+            let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*FFT_size], count:((i+1)*FFT_size) - 1 )))
+            for j in 0...(FFT_size-1){
+                //master_buffer!.floatChannelData.memory[(i*FFT_size)+j] = temp[j]
+                buffer_1.floatChannelData.memory[(i*FFT_size)+j] = temp[0][j]
+                buffer_2.floatChannelData.memory[(i*FFT_size)+j] = temp[1][j]
+                buffer_3.floatChannelData.memory[(i*FFT_size)+j] = temp[2][j]
+                buffer_4.floatChannelData.memory[(i*FFT_size)+j] = temp[3][j]
+                buffer_5.floatChannelData.memory[(i*FFT_size)+j] = temp[4][j]
+                buffer_6.floatChannelData.memory[(i*FFT_size)+j] = temp[5][j]
+                buffer_7.floatChannelData.memory[(i*FFT_size)+j] = temp[6][j]
+                buffer_8.floatChannelData.memory[(i*FFT_size)+j] = temp[7][j]
+            }
+        }
         
         let new_data = fft(original_data)
         
@@ -84,6 +112,10 @@ class SplitterPlayer : NSObject {
         let radix = FFTRadix(kFFTRadix2)
         let weights = vDSP_create_fftsetup(length, radix)
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+        
+        
+        
+        
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))
         
         var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
