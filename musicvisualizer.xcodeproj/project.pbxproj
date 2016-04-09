@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		794356561CB885FA0099B313 /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 794356551CB885FA0099B313 /* test.wav */; };
 		79EA14C91C90EAD0001510A9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EA14C81C90EAD0001510A9 /* AppDelegate.swift */; };
 		79EA14CB1C90EAD0001510A9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EA14CA1C90EAD0001510A9 /* ViewController.swift */; };
 		79EA14CE1C90EAD0001510A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79EA14CC1C90EAD0001510A9 /* Main.storyboard */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		794356551CB885FA0099B313 /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../Downloads/test.wav; sourceTree = "<group>"; };
 		79EA14C51C90EAD0001510A9 /* musicvisualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = musicvisualizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79EA14C81C90EAD0001510A9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79EA14CA1C90EAD0001510A9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				79EA14C81C90EAD0001510A9 /* AppDelegate.swift */,
 				79EA14CA1C90EAD0001510A9 /* ViewController.swift */,
 				850A30501CB86C1200F7D053 /* SplitterPlayer.swift */,
+				794356551CB885FA0099B313 /* test.wav */,
 				79EA14CC1C90EAD0001510A9 /* Main.storyboard */,
 				79EA14CF1C90EAD0001510A9 /* Assets.xcassets */,
 				79EA14D11C90EAD0001510A9 /* LaunchScreen.storyboard */,
@@ -235,6 +238,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				794356561CB885FA0099B313 /* test.wav in Resources */,
 				79EA14D31C90EAD0001510A9 /* LaunchScreen.storyboard in Resources */,
 				79EA14D01C90EAD0001510A9 /* Assets.xcassets in Resources */,
 				79EA14CE1C90EAD0001510A9 /* Main.storyboard in Resources */,

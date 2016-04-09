@@ -29,10 +29,10 @@ class SplitterPlayer : NSObject {
         let format = AVAudioFormat(commonFormat: .PCMFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: file.fileFormat.channelCount, interleaved: false)
         master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(file.length))
         try! file.readIntoBuffer(master_buffer!)
-    
+        
         //Record File Information
         self.sample_rate = file.fileFormat.sampleRate
-        self.file_length = (Int)file.length
+        self.file_length = Int(file.length)
         
         //Connecting player node to the audio engine and starting it
         let mixer = audio_engine.mainMixerNode
@@ -70,7 +70,7 @@ class SplitterPlayer : NSObject {
         
         let new_data = fft(original_data)
         
-        for i in 0...file_length{
+        for i in 0...file_length-1{
             master_buffer!.floatChannelData.memory[i] = new_data[i]
         }
     }
