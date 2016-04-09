@@ -58,7 +58,7 @@ class SplitterPlayer : NSObject {
     }
     
     func playNodes(){
-        //master_player.play()
+        master_player.play()
     }
     
     //Splits master_buffer into its frequencies
@@ -70,11 +70,13 @@ class SplitterPlayer : NSObject {
         
         // This will split the file into segments of size FFT_size
         for i in 0...(file_length/FFT_size){
-            let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*FFT_size], count:((i+1)*FFT_size) - 1 )))
-            for j in 0...(FFT_size-1){
-                //master_buffer!.floatChannelData.memory[(i*FFT_size)+j] = temp[j]
-                for k in 0...sub_buffers.count{
-                    sub_buffers[k].floatChannelData.memory[(i*FFT_size)+j] = temp[0][j]
+            
+            //For each frequency band perform FFT on the same audio
+            for j in 0...7{
+                let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*FFT_size], count:((i+1)*FFT_size) - 1 )), j )
+                //Change data for all point samples within the segment
+                for k in 0...(FFT_size-1){
+                    sub_buffers[j].floatChannelData.memory[(i*FFT_size)+k] = temp[k]
                 }
             }
         }
