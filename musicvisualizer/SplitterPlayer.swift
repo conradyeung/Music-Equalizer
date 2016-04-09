@@ -78,21 +78,21 @@ class SplitterPlayer : NSObject {
         
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
         
-        //Must be a power of two, this is the size of the sample we take of the audio at a time
-        let FFT_size = 1024
+        let segment_size = Int(FFT_size)
         
-        for i in 0...(file_length/FFT_size){
-            let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*FFT_size], count:((i+1)*FFT_size) - 1 )))
+        // This will split the file into segments of size FFT_size
+        for i in 0...(file_length/segment_size){
+            let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*segment_size], count:((i+1)*segment_size) - 1 )))
             for j in 0...(FFT_size-1){
                 //master_buffer!.floatChannelData.memory[(i*FFT_size)+j] = temp[j]
-                buffer_1.floatChannelData.memory[(i*FFT_size)+j] = temp[0][j]
-                buffer_2.floatChannelData.memory[(i*FFT_size)+j] = temp[1][j]
-                buffer_3.floatChannelData.memory[(i*FFT_size)+j] = temp[2][j]
-                buffer_4.floatChannelData.memory[(i*FFT_size)+j] = temp[3][j]
-                buffer_5.floatChannelData.memory[(i*FFT_size)+j] = temp[4][j]
-                buffer_6.floatChannelData.memory[(i*FFT_size)+j] = temp[5][j]
-                buffer_7.floatChannelData.memory[(i*FFT_size)+j] = temp[6][j]
-                buffer_8.floatChannelData.memory[(i*FFT_size)+j] = temp[7][j]
+                buffer_1.floatChannelData.memory[(i*segment_size)+j] = temp[0][j]
+                buffer_2.floatChannelData.memory[(i*segment_size)+j] = temp[1][j]
+                buffer_3.floatChannelData.memory[(i*segment_size)+j] = temp[2][j]
+                buffer_4.floatChannelData.memory[(i*segment_size)+j] = temp[3][j]
+                buffer_5.floatChannelData.memory[(i*segment_size)+j] = temp[4][j]
+                buffer_6.floatChannelData.memory[(i*segment_size)+j] = temp[5][j]
+                buffer_7.floatChannelData.memory[(i*segment_size)+j] = temp[6][j]
+                buffer_8.floatChannelData.memory[(i*segment_size)+j] = temp[7][j]
             }
         }
         
