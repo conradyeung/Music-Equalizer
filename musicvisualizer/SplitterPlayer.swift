@@ -19,18 +19,21 @@ class SplitterPlayer : NSObject {
     var master_buffer: AVAudioPCMBuffer?
 
     var sub_buffers: [AVAudioPCMBuffer] = []
+    var sub_players: [AVAudioPlayerNode] = []
     
     let FFT_size:UInt32 = 1024
+    var format: AVAudioFormat!
     
     var sample_rate: Double?
     var file_length: Int = 0
+    
     
     func readFilesIntoNodes( file_name: String, file_extension: String ) {
         
         //Loading the file into a buffer
         let url = NSBundle.mainBundle().URLForResource(file_name, withExtension: file_extension)
         let file = try! AVAudioFile(forReading: url!)
-        let format = AVAudioFormat(commonFormat: .PCMFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: file.fileFormat.channelCount, interleaved: false)
+        format = AVAudioFormat(commonFormat: .PCMFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: file.fileFormat.channelCount, interleaved: false)
         master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(file.length))
         try! file.readIntoBuffer(master_buffer!)
         
@@ -47,6 +50,14 @@ class SplitterPlayer : NSObject {
         let mixer = audio_engine.mainMixerNode
         audio_engine.attachNode(master_player)
         audio_engine.connect(master_player, to: mixer, format: format)
+        
+        //Initialize sub_players
+        for i in 0...7{
+            sub_players.append(AVAudioPlayerNode())
+            audio_engine.attachNode(sub_players[i])
+            audio_engine.connect(sub_players[i], to: mixer, format: format)
+        }
+        
         try! audio_engine.start()
         
 
@@ -55,10 +66,16 @@ class SplitterPlayer : NSObject {
         
         //Initialize Volume
         master_player.volume = 1.0
+    
+    
+    
     }
     
     func playNodes(){
-        master_player.play()
+        //master_player.play()
+        for i in 0...7{
+            sub_players[i].play()
+        }
     }
     
     //Splits master_buffer into its frequencies
@@ -87,6 +104,13 @@ class SplitterPlayer : NSObject {
                 }
             }
         }
+        
+        // Attach Sub buffers to nodes
+        for i in 0...7{
+            sub_players[i].scheduleBuffer(sub_buffers[i], atTime: nil, options: .Loops, completionHandler: nil)
+            sub_players[i].volume = 1.0
+        }
+        
         
 //        let new_data = fft(original_data)
 //        
