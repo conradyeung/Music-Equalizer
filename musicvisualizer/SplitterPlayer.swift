@@ -75,17 +75,18 @@ class SplitterPlayer : NSObject {
         var real = [Float](input)
         var imaginary = [Float](count: input.count, repeatedValue: 0.0)
         var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
-        
+        var out: [Float]
         let length = vDSP_Length(floor(log2(Float(input.count))))
         let radix = FFTRadix(kFFTRadix2)
         let weights = vDSP_create_fftsetup(length, radix)
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+        vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))
         
         var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
         vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
-        
+
         var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
-        vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [2.0 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
+        vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [1 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
         
         vDSP_destroy_fftsetup(weights)
         
