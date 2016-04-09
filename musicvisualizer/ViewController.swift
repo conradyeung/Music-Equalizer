@@ -13,12 +13,12 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        var arr: [Float] = [0,1,2,3,4,5,6,7]
-        //var arr_out = player.fft(arr)
-        //print(arr_out)
+        var arr: [Float] = [-1,0,1,0,-1,0,1,0]
+        var arr_out = player.fft(arr, band:0)
+        print(arr_out)
         // Do any additional setup after loading the view, typically from a nib.
         
-        player.readFilesIntoNodes("test", file_extension: "wav")
+        player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
         player.split_audio_into_subnodes()
         player.playNodes()
     }
