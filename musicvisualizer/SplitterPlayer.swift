@@ -18,7 +18,7 @@ class SplitterPlayer : NSObject {
     var master_player: AVAudioPlayerNode = AVAudioPlayerNode()
     var master_buffer: AVAudioPCMBuffer?
 
-    var sub_buffers: [AVAudioPCMBuffer]!
+    var sub_buffers: [AVAudioPCMBuffer] = []
     
     let FFT_size:UInt32 = 1024
     
@@ -35,8 +35,8 @@ class SplitterPlayer : NSObject {
         try! file.readIntoBuffer(master_buffer!)
         
         //Initialize sub_buffers
-        for i in 0...sub_buffers.count{
-            sub_buffers[i] = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size)
+        for i in 0...7{
+            sub_buffers.append(AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size))
         }
         
         //Record File Information
@@ -69,43 +69,66 @@ class SplitterPlayer : NSObject {
         let FFT_size = 1024
         
         // This will split the file into segments of size FFT_size
-        for i in 0...(file_length/FFT_size){
+        for i in 0...((file_length/FFT_size)-1){
             
             //For each frequency band perform FFT on the same audio
             for j in 0...7{
-                let temp = fft( Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[i*FFT_size], count:((i+1)*FFT_size) - 1 )), j )
+                
+                var temp: [Float] = []
+                for p in 0...(FFT_size-1){
+                    temp.append(original_data[(i*FFT_size)+p])
+                }
+                
+                let new_data_seg = fft(temp, band:j)
+                
                 //Change data for all point samples within the segment
                 for k in 0...(FFT_size-1){
-                    sub_buffers[j].floatChannelData.memory[(i*FFT_size)+k] = temp[k]
+                    sub_buffers[j].floatChannelData.memory[k] = new_data_seg[k]
                 }
             }
         }
         
-        let new_data = fft(original_data)
-        
-        for i in 0...file_length-1{
-            master_buffer!.floatChannelData.memory[i] = new_data[i]
-        }
+//        let new_data = fft(original_data)
+//        
+//        for i in 0...file_length-1{
+//            master_buffer!.floatChannelData.memory[i] = new_data[i]
+//        }
     }
     
-    public func fft(input: [Float]) -> [Float] {
+    internal func fft(input: [Float], band: Int) -> [Float] {
         var real = [Float](input)
         var imaginary = [Float](count: input.count, repeatedValue: 0.0)
         var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
-        var out: [Float]
         let length = vDSP_Length(floor(log2(Float(input.count))))
         let radix = FFTRadix(kFFTRadix2)
         let weights = vDSP_create_fftsetup(length, radix)
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
-        
-        
-        
+        if(band == 7){
+            for i in 0...(7*input.count/8){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+            }
+        }else if(band == 0){
+            for i in (input.count/8)...(input.count-1){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+            }
+        }else{
+            for i in 0...(band*input.count/8){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+            }
+            for i in ((band+1)*input.count/8)...(input.count-1){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+            }
+        }
         
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))
         
         var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
         vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
-
+        
         var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
         vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [1 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
         

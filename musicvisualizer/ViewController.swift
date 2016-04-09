@@ -14,8 +14,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         var arr: [Float] = [0,1,2,3,4,5,6,7]
-        var arr_out = player.fft(arr)
-        print(arr_out)
+        //var arr_out = player.fft(arr)
+        //print(arr_out)
         // Do any additional setup after loading the view, typically from a nib.
         
         player.readFilesIntoNodes("test", file_extension: "wav")
