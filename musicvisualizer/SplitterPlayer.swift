@@ -88,7 +88,7 @@ class SplitterPlayer : NSObject {
         print("file_length: \(file_length) \n FFT_size: \(FFT_size) \n divided: \(file_length/FFT_size) \n")
         
         // This will split the file into segments of size FFT_size
-        for i in 0...0/*((file_length/FFT_size)-1)*/{
+        for i in 0...1/*((file_length/FFT_size)-1)*/{
             
             var temp =  [Float](count: FFT_size, repeatedValue: 0.0)
             
@@ -98,8 +98,15 @@ class SplitterPlayer : NSObject {
             
             let new_data_seg = fft(temp, band: 0)
             
-            print("temp: \(temp[0...9]) \n new: \(new_data_seg[0...9])\n")
-            
+            /*print("Segment \(i)\n temp:")
+            for i in 0...1023{
+                print(temp[i])
+            }
+            print("new:")
+            for i in 0...1023{
+                print(new_data_seg[i])
+            }*/
+                
             for k in 0...(FFT_size-1){
                 master_buffer!.floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[k]
             }
@@ -125,10 +132,10 @@ class SplitterPlayer : NSObject {
         /*for i in 0...7{
             sub_players[i].scheduleBuffer(sub_buffers[i], atTime: nil, options: .Loops, completionHandler: nil)
             sub_players[i].volume = 1.0
-        }
+        }*/
         
         
-        let new_data = fft(original_data, band:0)
+        /*let new_data = fft(original_data, band:0)
         
         for i in 0...file_length-1{
             master_buffer!.floatChannelData.memory[i] = new_data[i]
@@ -143,6 +150,11 @@ class SplitterPlayer : NSObject {
         let radix = FFTRadix(kFFTRadix2)
         let weights = vDSP_create_fftsetup(length, radix)
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+        
+        print("New FFT block size: \(input.count)")
+        for i in 0...input.count-1{
+            print(splitComplex.realp[i])
+        }
         
         /*if(band == 7){
         for i in 0...(7*input.count/8){
