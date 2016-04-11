@@ -88,10 +88,17 @@ class SplitterPlayer : NSObject {
         
         print("PLAYING testplayer")
         //test_player.play()
-        //sub_players[1].play()
+        //sub_players[7].play()
         
+        var start_time:[AVAudioTime]?
         for i in 0...7{
-            sub_players[i].play()
+            if (start_time == nil){
+                let delay:Float = 0.1
+                let start_time_sample:AVAudioFramePosition = sub_players[i].lastRenderTime!.sampleTime + AVAudioFramePosition(delay * Float(self.sample_rate!))
+                start_time = [AVAudioTime(sampleTime: start_time_sample, atRate: self.sample_rate!)]
+            }
+            
+            sub_players[i].playAtTime(start_time![0])
         }
     }
     
@@ -137,8 +144,6 @@ class SplitterPlayer : NSObject {
         }
         
         print("SCHEDULING sub player with sub_buffer")
-        //sub_players[1].scheduleBuffer(sub_buffers[1], atTime: nil, options: .Loops, completionHandler: nil)
-        //sub_players[1].volume = 1.0
         
         // Attach Sub buffers to nodes
         for i in 0...7{
