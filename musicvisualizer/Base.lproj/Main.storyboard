@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
@@ -16,11 +16,51 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cju-df-g2T">
+                                <rect key="frame" x="7" y="466" width="305" height="134"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="8bC-Xf-vdC" id="YqB-bN-090"/>
+                                    <outlet property="delegate" destination="8bC-Xf-vdC" id="32O-bD-qgO"/>
+                                </connections>
+                            </pickerView>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="100" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="ghp-eW-xB6">
+                                <rect key="frame" x="318" y="518" width="118" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="114" id="Z2P-yk-wh1"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="sliderChange:" destination="BYZ-38-t0r" eventType="valueChanged" id="3Y1-mi-oeH"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Volume Control" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aWh-j6-Bet">
+                                <rect key="frame" x="316" y="564" width="118" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="aWh-j6-Bet" firstAttribute="trailing" secondItem="ghp-eW-xB6" secondAttribute="trailing" id="2CJ-8T-ZcX"/>
+                            <constraint firstItem="ghp-eW-xB6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="77" id="GkZ-3h-knt"/>
+                            <constraint firstItem="aWh-j6-Bet" firstAttribute="top" secondItem="ghp-eW-xB6" secondAttribute="bottom" constant="16" id="MOE-4m-g7U"/>
+                            <constraint firstItem="ghp-eW-xB6" firstAttribute="leading" secondItem="Cju-df-g2T" secondAttribute="trailing" constant="8" id="Ml4-bR-IeJ"/>
+                            <constraint firstItem="Cju-df-g2T" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="7" id="VMy-yp-IEf"/>
+                            <constraint firstAttribute="bottom" secondItem="Cju-df-g2T" secondAttribute="bottom" id="Ztg-dM-CdR"/>
+                            <constraint firstItem="Cju-df-g2T" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="446" id="gbl-1s-H4O"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aWh-j6-Bet" secondAttribute="bottom" constant="15" id="ghH-HB-5fd"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ghp-eW-xB6" secondAttribute="bottom" constant="52" id="on9-ud-Z2P"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="VolumeSlider" destination="ghp-eW-xB6" id="Wfa-45-eZf"/>
+                        <outlet property="bandPick" destination="Cju-df-g2T" id="clF-fK-Lms"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="208" y="223"/>
         </scene>
     </scenes>
 </document>
