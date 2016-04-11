@@ -21,7 +21,7 @@ class SplitterPlayer : NSObject {
     var sub_buffers: [AVAudioPCMBuffer] = []
     var sub_players: [AVAudioPlayerNode] = []
     
-    let FFT_size:UInt32 = 1024
+    let FFT_size:UInt32 = 1048576
     var format: AVAudioFormat!
     
     var sample_rate: Double?
@@ -83,12 +83,12 @@ class SplitterPlayer : NSObject {
         
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
         
-        let FFT_size = 1024
+        let FFT_size = 1048576
         
         print("file_length: \(file_length) \n FFT_size: \(FFT_size) \n divided: \(file_length/FFT_size) \n")
         
         // This will split the file into segments of size FFT_size
-        for i in 0...1/*((file_length/FFT_size)-1)*/{
+        for i in 0...((file_length/FFT_size)-1){
             
             var temp =  [Float](count: FFT_size, repeatedValue: 0.0)
             
@@ -96,7 +96,8 @@ class SplitterPlayer : NSObject {
                 temp[k] = original_data[(i*FFT_size)+k]
             }
             
-            let new_data_seg = fft(temp, band: 0)
+            print("Audio segment \(i)")
+            let new_data_seg = fft(temp, band: 1)
             
             /*print("Segment \(i)\n temp:")
             for i in 0...1023{
@@ -108,7 +109,7 @@ class SplitterPlayer : NSObject {
             }*/
                 
             for k in 0...(FFT_size-1){
-                master_buffer!.floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[k]
+                master_buffer!.floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[0][k]
             }
             
             //For each frequency band perform FFT on the same audio
@@ -142,7 +143,7 @@ class SplitterPlayer : NSObject {
         }*/
     }
     
-    internal func fft(input: [Float], band: Int) -> [Float] {
+    internal func fft(input: [Float], band: Int) -> [[Float]] {
         var real = [Float](input)
         var imaginary = [Float](count: input.count, repeatedValue: 0.0)
         var splitComplex = DSPSplitComplex(realp: &real, imagp: &imaginary)
@@ -150,11 +151,15 @@ class SplitterPlayer : NSObject {
         let radix = FFTRadix(kFFTRadix2)
         let weights = vDSP_create_fftsetup(length, radix)
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+
+        var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
+        vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
         
-        print("New FFT block size: \(input.count)")
-        for i in 0...input.count-1{
-            print(splitComplex.realp[i])
-        }
+        var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
+        vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [2.0 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
+        
+        //print("MAGNITUDES OF BLOCK SIZE: \(input.count)")
+        //print(normalizedMagnitudes)
         
         /*if(band == 7){
         for i in 0...(7*input.count/8){
@@ -177,17 +182,56 @@ class SplitterPlayer : NSObject {
         }
         }*/
         
+        let ic = Float(input.count)
+        
+        let base_bandwith = Float(62.0/44100.0) //0.0014
+        
+        if (band == 0){
+            let bandwith_end_index = Int(base_bandwith*ic)
+        
+            for i in bandwith_end_index+2...(input.count-(bandwith_end_index+2)){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+            }
+        }
+        else if (band < 16 && band > 0){
+            
+            let power_of2 = powf(2, Float(band-1))
+            
+            
+            let start = Int(base_bandwith * power_of2 * ic)
+            let end = Int(base_bandwith * 2 * power_of2 * ic)
+            
+            for i in end+2...(input.count-(end+2)){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+            }
+            
+            for i in 1..<(start){
+                splitComplex.realp[i] = 0
+                splitComplex.imagp[i] = 0
+                splitComplex.realp[input.count-i] = 0
+                splitComplex.imagp[input.count-i] = 0
+            }
+        }
+        else
+        {
+            print("ERROR")
+        }
+
+        
+        
         vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))
         
         //var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
         //vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
         
-        var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
-        vDSP_vsmul(splitComplex.realp, 1, [1 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
+        var outputValues = [Float](count: input.count, repeatedValue: 0.0)
+        vDSP_vsmul(splitComplex.realp, 1, [1 / Float(input.count)], &outputValues, 1, vDSP_Length(input.count))
         
         vDSP_destroy_fftsetup(weights)
         
-        return normalizedMagnitudes
+        return [outputValues]
     }
     
 }
