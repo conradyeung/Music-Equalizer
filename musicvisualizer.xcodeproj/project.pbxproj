@@ -10,6 +10,8 @@
 		79A8E5021CBB2843004593E1 /* tone.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79A8E5011CBB2843004593E1 /* tone.wav */; };
 		79A8E5041CBB299B004593E1 /* tone_3800.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79A8E5031CBB299B004593E1 /* tone_3800.wav */; };
 		79A8E5061CBB29FD004593E1 /* tone_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79A8E5051CBB29FD004593E1 /* tone_3.wav */; };
+		79A8E50B1CBC36F0004593E1 /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = 79A8E50A1CBC36F0004593E1 /* play.png */; };
+		79A8E50D1CBC3E1D004593E1 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 79A8E50C1CBC3E1D004593E1 /* player.png */; };
 		79EA14C91C90EAD0001510A9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EA14C81C90EAD0001510A9 /* AppDelegate.swift */; };
 		79EA14CB1C90EAD0001510A9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EA14CA1C90EAD0001510A9 /* ViewController.swift */; };
 		79EA14CE1C90EAD0001510A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 79EA14CC1C90EAD0001510A9 /* Main.storyboard */; };
@@ -43,6 +45,8 @@
 		79A8E5011CBB2843004593E1 /* tone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone.wav; sourceTree = "<group>"; };
 		79A8E5031CBB299B004593E1 /* tone_3800.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone_3800.wav; sourceTree = "<group>"; };
 		79A8E5051CBB29FD004593E1 /* tone_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = tone_3.wav; sourceTree = "<group>"; };
+		79A8E50A1CBC36F0004593E1 /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play.png; sourceTree = "<group>"; };
+		79A8E50C1CBC3E1D004593E1 /* player.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = player.png; sourceTree = "<group>"; };
 		79EA14C51C90EAD0001510A9 /* musicvisualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = musicvisualizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79EA14C81C90EAD0001510A9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79EA14CA1C90EAD0001510A9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -115,6 +119,8 @@
 				79A8E5031CBB299B004593E1 /* tone_3800.wav */,
 				79EA14CC1C90EAD0001510A9 /* Main.storyboard */,
 				79EA14CF1C90EAD0001510A9 /* Assets.xcassets */,
+				79A8E50C1CBC3E1D004593E1 /* player.png */,
+				79A8E50A1CBC36F0004593E1 /* play.png */,
 				79A8E5051CBB29FD004593E1 /* tone_3.wav */,
 				79A8E5011CBB2843004593E1 /* tone.wav */,
 				79EA14D11C90EAD0001510A9 /* LaunchScreen.storyboard */,
@@ -211,7 +217,7 @@
 				TargetAttributes = {
 					79EA14C41C90EAD0001510A9 = {
 						CreatedOnToolsVersion = 7.2.1;
-						DevelopmentTeam = RRDJ24SQ9N;
+						DevelopmentTeam = 9DGH56CWQC;
 					};
 					79EA14D81C90EAD0001510A9 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -250,9 +256,11 @@
 			files = (
 				79A8E5021CBB2843004593E1 /* tone.wav in Resources */,
 				79EA14D31C90EAD0001510A9 /* LaunchScreen.storyboard in Resources */,
+				79A8E50B1CBC36F0004593E1 /* play.png in Resources */,
 				79EA14D01C90EAD0001510A9 /* Assets.xcassets in Resources */,
 				79EA14CE1C90EAD0001510A9 /* Main.storyboard in Resources */,
 				85D2C7BF1CB9A345002956B9 /* Bubba_converted.wav in Resources */,
+				79A8E50D1CBC3E1D004593E1 /* player.png in Resources */,
 				850A30531CB883E200F7D053 /* Plastik.wav in Resources */,
 				79A8E5061CBB29FD004593E1 /* tone_3.wav in Resources */,
 				79A8E5041CBB299B004593E1 /* tone_3800.wav in Resources */,
@@ -428,7 +436,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = musicvisualizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizer;
+				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizer2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -442,7 +450,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = musicvisualizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizer;
+				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizer2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};

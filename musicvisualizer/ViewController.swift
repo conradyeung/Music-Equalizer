@@ -14,6 +14,7 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     var layers:[CALayer]!
     var scale: Float = 1.0
     var select: Int = 0
+    var playing = false
     var pickerDataSource = ["0-62Hz","63-125Hz","126-250Hz","251-500Hz","501Hz-1kHz","1khz-2kHz","2-4kHz","4-8kHz"];
     @IBOutlet weak var bandPick: UIPickerView!
     @IBOutlet weak var FreqBinSize: UILabel!
@@ -21,9 +22,17 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     @IBOutlet weak var SampleRate: UILabel!
     @IBOutlet weak var FileLength: UILabel!
     @IBOutlet weak var FFTSize: UILabel!
+    @IBOutlet weak var PlayButton: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let imageView = PlayButton
+        if(playing){
+            PlayButton.image = UIImage(named: "pause.png")
+        }
+        let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:Selector("imageTapped:"))
+        imageView.userInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGestureRecognizer)
         self.bandPick.dataSource = self;
         self.bandPick.delegate = self;
         // Setup 8 layers for frequency bars.
@@ -39,18 +48,24 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         displayLink.frameInterval = 1
         displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
     
-        //play audio functions
-        player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
+        //audio player fft setup
+        player.readFilesIntoNodes("Plastik", file_extension: "wav")
         player.split_audio_into_subnodes()
-        player.playNodes()
         
         // Set label text
         SampleRate.text = "Sample Rate: " + String(player.sample_rate!) + " Hz"
         FileLength.text = "File Length: " + String(player.file_length)
         FFTSize.text = "FFT Size: " + String(player.FFT_size)
-        FreqBinSize.text = "Frequency Bin Size: " + String(Float(player.sample_rate!)/Float(player.FFT_size)) + " Hz"
+        FreqBinSize.text = "Frequency Bin Resolution: " + String(Float(player.sample_rate!)/Float(player.FFT_size)) + " Hz"
     }
-
+    func imageTapped(img: AnyObject)
+    {
+        //play when play button pressed
+        if(!playing){
+            playing = true
+            player.playNodes()
+        }
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -96,13 +111,12 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         return pickerDataSource.count;
     }
     
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return pickerDataSource[row]
     }
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         select = row
-        print(row)
     }
 }
 
