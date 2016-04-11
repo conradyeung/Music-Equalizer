@@ -19,6 +19,7 @@
 		79EA14E91C90EAD0001510A9 /* musicvisualizerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EA14E81C90EAD0001510A9 /* musicvisualizerUITests.swift */; };
 		850A30511CB86C1200F7D053 /* SplitterPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850A30501CB86C1200F7D053 /* SplitterPlayer.swift */; };
 		850A30531CB883E200F7D053 /* Plastik.wav in Resources */ = {isa = PBXBuildFile; fileRef = 850A30521CB883E200F7D053 /* Plastik.wav */; };
+		85955F781CBC34B4007A4E4B /* Plastik_converted.wav in Resources */ = {isa = PBXBuildFile; fileRef = 85955F771CBC34B4007A4E4B /* Plastik_converted.wav */; };
 		85D2C7BF1CB9A345002956B9 /* Bubba_converted.wav in Resources */ = {isa = PBXBuildFile; fileRef = 85D2C7BE1CB9A345002956B9 /* Bubba_converted.wav */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,7 @@
 		79EA14EA1C90EAD0001510A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		850A30501CB86C1200F7D053 /* SplitterPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitterPlayer.swift; sourceTree = "<group>"; };
 		850A30521CB883E200F7D053 /* Plastik.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Plastik.wav; sourceTree = "<group>"; };
+		85955F771CBC34B4007A4E4B /* Plastik_converted.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Plastik_converted.wav; sourceTree = "<group>"; };
 		85D2C7BE1CB9A345002956B9 /* Bubba_converted.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Bubba_converted.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,6 +121,7 @@
 				79A8E5011CBB2843004593E1 /* tone.wav */,
 				79EA14D11C90EAD0001510A9 /* LaunchScreen.storyboard */,
 				85D2C7BE1CB9A345002956B9 /* Bubba_converted.wav */,
+				85955F771CBC34B4007A4E4B /* Plastik_converted.wav */,
 				850A30521CB883E200F7D053 /* Plastik.wav */,
 				79EA14D41C90EAD0001510A9 /* Info.plist */,
 			);
@@ -256,6 +259,7 @@
 				850A30531CB883E200F7D053 /* Plastik.wav in Resources */,
 				79A8E5061CBB29FD004593E1 /* tone_3.wav in Resources */,
 				79A8E5041CBB299B004593E1 /* tone_3800.wav in Resources */,
+				85955F781CBC34B4007A4E4B /* Plastik_converted.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
