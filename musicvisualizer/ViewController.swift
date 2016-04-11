@@ -14,13 +14,13 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     var layers:[CALayer]!
     var scale: Float = 1.0
     var select: Int = 0
-    var pickerDataSource = ["Band 1","Band 2","Band 3","Band 4","Band 5","Band 6","Band 7","Band 8"];
+    var pickerDataSource = ["0-62Hz","63-125Hz","126-250Hz","251-500Hz","501Hz-1kHz","1khz-2kHz","2-4kHz","4-8kHz"];
     @IBOutlet weak var bandPick: UIPickerView!
+    @IBOutlet weak var FreqBinSize: UILabel!
     @IBOutlet weak var VolumeSlider: UISlider!
     @IBOutlet weak var SampleRate: UILabel!
     @IBOutlet weak var FileLength: UILabel!
     @IBOutlet weak var FFTSize: UILabel!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,22 +34,21 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
             layers[n].frame = CGRectZero
             self.view.layer.addSublayer(layers[n])
         }
-        var arr: [Int] = [7,6,5,4,3,2,1,0]
-        // A display link calls us on every frame (60 fps).
+        // A display link call for graph functions
         displayLink = CADisplayLink(target: self, selector: "onDisplayLink")
         displayLink.frameInterval = 1
         displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
-
-//        var arr_out = player.fft(arr, band:0)
-//        print(arr_out)
-        // Do any additional setup after loading the view, typically from a nib.
-        
+    
+        //play audio functions
         player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
         player.split_audio_into_subnodes()
         player.playNodes()
-        SampleRate.text = "Sample Rate: " + String(player.sample_rate!) + "HZ"
+        
+        // Set label text
+        SampleRate.text = "Sample Rate: " + String(player.sample_rate!) + " Hz"
         FileLength.text = "File Length: " + String(player.file_length)
         FFTSize.text = "FFT Size: " + String(player.FFT_size)
+        FreqBinSize.text = "Frequency Bin Size: " + String(Float(player.sample_rate!)/Float(player.FFT_size)) + " Hz"
     }
 
     override func didReceiveMemoryWarning() {
@@ -58,6 +57,7 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     }
     
     @IBAction func sliderChange(sender: UISlider) {
+        //volume scale slider
         scale = Float(sender.value/10.0)
         player.sub_players[select].volume = scale
     }
@@ -65,8 +65,8 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         // Get the frequency values.
         let frequencies = UnsafeMutablePointer<Float>.alloc(8)
         for i in 0...7{
+            //set frequencies as volume and normalize values
             frequencies[i] = player.sub_players[i].volume/20
-            //print(frequencies[i])
         }
         // Wrapping the UI changes in a CATransaction block like this prevents animation/smoothing.
         CATransaction.begin()
@@ -74,7 +74,7 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         CATransaction.setDisableActions(true)
         
         // Set the dimension of every frequency bar.
-        let originY:CGFloat = self.view.frame.size.height - 120
+        let originY:CGFloat = self.view.frame.size.height - 160
         let width:CGFloat = (self.view.frame.size.width - 47) / 8
         var frame:CGRect = CGRectMake(20, 0, width, 0)
         for n in 0...7 {
