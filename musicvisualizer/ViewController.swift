@@ -46,12 +46,12 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
     
         //audio player fft setup
-        player.readFilesIntoNodes("Plastik", file_extension: "wav")
+        player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
         player.split_audio_into_subnodes()
         
         // Set label text
         SampleRate.text = "Sample Rate: " + String(player.sample_rate!) + " Hz"
-        FileLength.text = "File Length: " + String(player.file_length)
+        FileLength.text = "File Length: " + String(player.original_file_length)
         FFTSize.text = "FFT Size: " + String(player.FFT_size)
         FreqBinSize.text = "Frequency Bin Resolution: " + String(Float(player.sample_rate!)/Float(player.FFT_size)) + " Hz"
     }

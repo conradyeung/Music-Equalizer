@@ -29,6 +29,7 @@ class SplitterPlayer : NSObject {
     
     var sample_rate: Double?
     var file_length: Int = 0
+    var original_file_length: Int = 0
     
     
     func readFilesIntoNodes( file_name: String, file_extension: String ) {
@@ -48,6 +49,7 @@ class SplitterPlayer : NSObject {
         //Record File Information and set FFT_Size
         self.sample_rate = file.fileFormat.sampleRate
         self.file_length = Int(frame_size)
+        self.original_file_length = Int(file.length)
         
         master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(frame_size))
         try! file.readIntoBuffer(master_buffer!)
@@ -228,7 +230,7 @@ class SplitterPlayer : NSObject {
         }
         
         var power_of_2 = 8
-        while( 2*power_of_2 <= number ){
+        while( 2*power_of_2 <= number && power_of_2 <= 8388608){
             power_of_2 = power_of_2*2
         }
         
