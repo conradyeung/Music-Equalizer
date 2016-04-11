@@ -37,23 +37,27 @@ class SplitterPlayer : NSObject {
         let url = NSBundle.mainBundle().URLForResource(file_name, withExtension: file_extension)
         let file = try! AVAudioFile(forReading: url!)
         format = AVAudioFormat(commonFormat: .PCMFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: file.fileFormat.channelCount, interleaved: false)
-        master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(file.length))
+        
+        //Recalibrate framesize to fit audiofile for FFT computation
+        let frame_size = FFT_size*(UInt32(file.length)/FFT_size)
+        
+        master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(frame_size))
         try! file.readIntoBuffer(master_buffer!)
         
         //Initialize sub_buffers
         let file2 = try! AVAudioFile(forReading: url!)
-        test_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(file2.length))
+        test_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(frame_size))
         try! file2.readIntoBuffer(test_buffer!)
         
         for i in 0...7{
             let temp_file = try! AVAudioFile(forReading: url!)
-            sub_buffers.append(AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(temp_file.length)))
+            sub_buffers.append(AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(frame_size)))
             try! temp_file.readIntoBuffer(sub_buffers[i])
         }
         
         //Record File Information
         self.sample_rate = file.fileFormat.sampleRate
-        self.file_length = Int(file.length)
+        self.file_length = Int(frame_size)
         
         //Connecting player node to the audio engine and starting it
         let mixer = audio_engine.mainMixerNode
@@ -83,13 +87,10 @@ class SplitterPlayer : NSObject {
     
     }
     
+    // Starts playing the nodes containing the different frequency band data
     func playNodes(){
-        //master_player.play()
-        
-        print("PLAYING testplayer")
-        //test_player.play()
-        //sub_players[7].play()
-        
+
+        //This loop will sync all band to play at the same time
         var start_time:[AVAudioTime]?
         for i in 0...7{
             if (start_time == nil){
@@ -102,11 +103,13 @@ class SplitterPlayer : NSObject {
         }
     }
     
-    //Splits master_buffer into its frequencies
+    //Splits master_buffer into its frequencies and places that data into seperate buffers
     func split_audio_into_subnodes(){
         
+        //Original data stored in a array to work with
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
         
+        //The FFT_size redeclared as an Int (this is the number of frames of the segment we compute fft on)
         let FFT_size = 1048576
         
         print("file_length: \(file_length) \n FFT_size: \(FFT_size) \n divided: \(file_length/FFT_size) \n")
@@ -114,22 +117,13 @@ class SplitterPlayer : NSObject {
         // This will split the file into segments of size FFT_size
         for i in 0...((file_length/FFT_size)-1){
             
-            var temp =  [Float](count: FFT_size, repeatedValue: 0.0)
-            
             //Take original data and store in temp container of length FFT_size
+            var temp =  [Float](count: FFT_size, repeatedValue: 0.0)
             for k in 0...(FFT_size-1){
                 temp[k] = original_data[(i*FFT_size)+k]
             }
             
             print("Audio segment \(i)")
-            /*let new_data_seg = fft(temp, band: 1)
-                
-            for k in 0...(FFT_size-1){
-                //master_buffer!.floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[0][k]
-                //sub_buffers[1].floatChannelData.memory[k] = new_data_seg[0][k]
-            }*/
-            
-            
             
             //For each frequency band perform FFT on the same audio data stored in temp
             for j in 0...7{
@@ -150,13 +144,6 @@ class SplitterPlayer : NSObject {
             sub_players[i].scheduleBuffer(sub_buffers[i], atTime: nil, options: .Loops, completionHandler: nil)
             sub_players[i].volume = 1.0
         }
-        
-        
-        /*let new_data = fft(original_data, band:0)
-        
-        for i in 0...file_length-1{
-            master_buffer!.floatChannelData.memory[i] = new_data[i]
-        }*/
     }
     
     internal func fft(input: [Float], band: Int) -> [[Float]] {
@@ -166,7 +153,7 @@ class SplitterPlayer : NSObject {
         let length = vDSP_Length(floor(log2(Float(input.count))))
         let radix = FFTRadix(kFFTRadix2)
         let weights = vDSP_create_fftsetup(length, radix)
-        vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))
+        vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_FORWARD))  //FFT transforms the data
 
         var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
         vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
@@ -174,35 +161,12 @@ class SplitterPlayer : NSObject {
         var normalizedMagnitudes = [Float](count: input.count, repeatedValue: 0.0)
         vDSP_vsmul(magnitudes.map{sqrt($0)}, 1, [2.0 / Float(input.count)], &normalizedMagnitudes, 1, vDSP_Length(input.count))
         
-        //print("MAGNITUDES OF BLOCK SIZE: \(input.count)")
-        //print(normalizedMagnitudes)
-        
-        /*if(band == 7){
-        for i in 0...(7*input.count/8){
-        splitComplex.realp[i] = 0
-        splitComplex.imagp[i] = 0
-        }
-        }else if(band == 0){
-        for i in (input.count/8)...(input.count-1){
-        splitComplex.realp[i] = 0
-        splitComplex.imagp[i] = 0
-        }
-        }else{
-        for i in 0...(band*input.count/8){
-        splitComplex.realp[i] = 0
-        splitComplex.imagp[i] = 0
-        }
-        for i in ((band+1)*input.count/8)...(input.count-1){
-        splitComplex.realp[i] = 0
-        splitComplex.imagp[i] = 0
-        }
-        }*/
-        
+        //The input count is stored as a float to compute the % of data needed for a frequency range
         let ic = Float(input.count)
         
-        let base_bandwith = Float(62.0/44100.0) //0.0014
+        let base_bandwith = Float(62.0/44100.0) //0.14% of the bins are in the 0-62Hz range
         
-        if (band == 0){
+        if (band == 0){                                     //Delete frequency data not in bottom range to get bottom data
             let bandwith_end_index = Int(base_bandwith*ic)
         
             for i in bandwith_end_index+2...(input.count-(bandwith_end_index+2)){
@@ -210,7 +174,7 @@ class SplitterPlayer : NSObject {
                 splitComplex.imagp[i] = 0
             }
         }
-        else if (band < 16 && band > 0){
+        else if (band < 8 && band > 0){                     //Delete frequency data not in the corresponding band range
             
             let power_of2 = powf(2, Float(band-1))
             
@@ -232,12 +196,12 @@ class SplitterPlayer : NSObject {
         }
         else
         {
-            print("ERROR")
+            print("ERROR: Band requested is out of range") //Message to programmer if fft is used wrong
         }
 
         
         
-        vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))
+        vDSP_fft_zip(weights, &splitComplex, 1, length, FFTDirection(FFT_INVERSE))  //Inverse the data to get back audio wave
         
         //var magnitudes = [Float](count: input.count, repeatedValue: 0.0)
         //vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(input.count))
