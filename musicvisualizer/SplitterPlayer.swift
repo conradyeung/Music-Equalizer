@@ -18,6 +18,9 @@ class SplitterPlayer : NSObject {
     var master_player: AVAudioPlayerNode = AVAudioPlayerNode()
     var master_buffer: AVAudioPCMBuffer?
 
+    var test_buffer: AVAudioPCMBuffer?
+    var test_player: AVAudioPlayerNode = AVAudioPlayerNode()
+    
     var sub_buffers: [AVAudioPCMBuffer] = []
     var sub_players: [AVAudioPlayerNode] = []
     
@@ -38,8 +41,14 @@ class SplitterPlayer : NSObject {
         try! file.readIntoBuffer(master_buffer!)
         
         //Initialize sub_buffers
-        for _ in 0...7{
-            sub_buffers.append(AVAudioPCMBuffer(PCMFormat: format, frameCapacity: FFT_size))
+        let file2 = try! AVAudioFile(forReading: url!)
+        test_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(file2.length))
+        try! file2.readIntoBuffer(test_buffer!)
+        
+        for i in 0...7{
+            let temp_file = try! AVAudioFile(forReading: url!)
+            sub_buffers.append(AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(temp_file.length)))
+            try! temp_file.readIntoBuffer(sub_buffers[i])
         }
         
         //Record File Information
@@ -52,6 +61,9 @@ class SplitterPlayer : NSObject {
         audio_engine.connect(master_player, to: mixer, format: format)
         
         //Initialize sub_players
+        audio_engine.attachNode(test_player)
+        audio_engine.connect(test_player, to: mixer, format: format)
+        
         for i in 0...7{
             sub_players.append(AVAudioPlayerNode())
             audio_engine.attachNode(sub_players[i])
@@ -60,22 +72,27 @@ class SplitterPlayer : NSObject {
         
         try! audio_engine.start()
         
-
+        
         //Schedule the node when to start playing
         master_player.scheduleBuffer(master_buffer!, atTime: nil, options: .Loops, completionHandler: nil)
+        test_player.scheduleBuffer(test_buffer!, atTime: nil, options: .Loops, completionHandler: nil)
         
-        //Initialize Volume
+        //Intialize Volume
         master_player.volume = 1.0
-    
-    
+        test_player.volume = 1.0
     
     }
     
     func playNodes(){
-        master_player.play()
-        /*for i in 0...7{
-            //sub_players[i].play()
-        }*/
+        //master_player.play()
+        
+        print("PLAYING testplayer")
+        //test_player.play()
+        //sub_players[1].play()
+        
+        for i in 0...7{
+            sub_players[i].play()
+        }
     }
     
     //Splits master_buffer into its frequencies
@@ -92,48 +109,42 @@ class SplitterPlayer : NSObject {
             
             var temp =  [Float](count: FFT_size, repeatedValue: 0.0)
             
+            //Take original data and store in temp container of length FFT_size
             for k in 0...(FFT_size-1){
                 temp[k] = original_data[(i*FFT_size)+k]
             }
             
             print("Audio segment \(i)")
-            let new_data_seg = fft(temp, band: 1)
-            
-            /*print("Segment \(i)\n temp:")
-            for i in 0...1023{
-                print(temp[i])
-            }
-            print("new:")
-            for i in 0...1023{
-                print(new_data_seg[i])
-            }*/
+            /*let new_data_seg = fft(temp, band: 1)
                 
             for k in 0...(FFT_size-1){
-                master_buffer!.floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[0][k]
-            }
+                //master_buffer!.floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[0][k]
+                //sub_buffers[1].floatChannelData.memory[k] = new_data_seg[0][k]
+            }*/
             
-            //For each frequency band perform FFT on the same audio
-            /*for j in 0...7{
-                
-                var temp: [Float] = []
-                for p in 0...(FFT_size-1){
-                    temp.append(original_data[(i*FFT_size)+p])
-                }
+            
+            
+            //For each frequency band perform FFT on the same audio data stored in temp
+            for j in 0...7{
                 
                 let new_data_seg = fft(temp, band:j)
                 
                 //Change data for all point samples within the segment
                 for k in 0...(FFT_size-1){
-                    sub_buffers[j].floatChannelData.memory[k] = new_data_seg[k]
+                    sub_buffers[j].floatChannelData.memory[(i*FFT_size)+k] = new_data_seg[0][k]
                 }
-            }*/
+            }
         }
         
+        print("SCHEDULING sub player with sub_buffer")
+        //sub_players[1].scheduleBuffer(sub_buffers[1], atTime: nil, options: .Loops, completionHandler: nil)
+        //sub_players[1].volume = 1.0
+        
         // Attach Sub buffers to nodes
-        /*for i in 0...7{
+        for i in 0...7{
             sub_players[i].scheduleBuffer(sub_buffers[i], atTime: nil, options: .Loops, completionHandler: nil)
             sub_players[i].volume = 1.0
-        }*/
+        }
         
         
         /*let new_data = fft(original_data, band:0)
