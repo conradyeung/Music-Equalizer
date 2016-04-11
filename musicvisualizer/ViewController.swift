@@ -40,7 +40,7 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
     
         //play audio functions
-        player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
+        player.readFilesIntoNodes("tone_3800", file_extension: "wav")
         player.split_audio_into_subnodes()
         player.playNodes()
         

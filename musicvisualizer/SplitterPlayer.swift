@@ -24,7 +24,7 @@ class SplitterPlayer : NSObject {
     var sub_buffers: [AVAudioPCMBuffer] = []
     var sub_players: [AVAudioPlayerNode] = []
     
-    let FFT_size:UInt32 = 1048576
+    var FFT_size = 1048576
     var format: AVAudioFormat!
     
     var sample_rate: Double?
@@ -37,9 +37,17 @@ class SplitterPlayer : NSObject {
         let url = NSBundle.mainBundle().URLForResource(file_name, withExtension: file_extension)
         let file = try! AVAudioFile(forReading: url!)
         format = AVAudioFormat(commonFormat: .PCMFormatFloat32, sampleRate: file.fileFormat.sampleRate, channels: file.fileFormat.channelCount, interleaved: false)
+
+
+        // Set FFT_size
+        self.FFT_size = find_highest_2power(Int(file.length))/4
         
         //Recalibrate framesize to fit audiofile for FFT computation
-        let frame_size = FFT_size*(UInt32(file.length)/FFT_size)
+        let frame_size = UInt32(FFT_size*(Int(file.length)/FFT_size))
+ 
+        //Record File Information and set FFT_Size
+        self.sample_rate = file.fileFormat.sampleRate
+        self.file_length = Int(frame_size)
         
         master_buffer = AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(frame_size))
         try! file.readIntoBuffer(master_buffer!)
@@ -54,10 +62,6 @@ class SplitterPlayer : NSObject {
             sub_buffers.append(AVAudioPCMBuffer(PCMFormat: format, frameCapacity: UInt32(frame_size)))
             try! temp_file.readIntoBuffer(sub_buffers[i])
         }
-        
-        //Record File Information
-        self.sample_rate = file.fileFormat.sampleRate
-        self.file_length = Int(frame_size)
         
         //Connecting player node to the audio engine and starting it
         let mixer = audio_engine.mainMixerNode
@@ -103,14 +107,17 @@ class SplitterPlayer : NSObject {
         }
     }
     
+    func pauseNodes(){
+        for i in 0...7{
+            sub_players[i].pause()
+        }
+    }
+    
     //Splits master_buffer into its frequencies and places that data into seperate buffers
     func split_audio_into_subnodes(){
         
         //Original data stored in a array to work with
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
-        
-        //The FFT_size redeclared as an Int (this is the number of frames of the segment we compute fft on)
-        let FFT_size = 1048576
         
         print("file_length: \(file_length) \n FFT_size: \(FFT_size) \n divided: \(file_length/FFT_size) \n")
         
@@ -214,4 +221,17 @@ class SplitterPlayer : NSObject {
         return [outputValues]
     }
     
+    //Function that returns the highest power of 2 that is less than the input number
+    internal func find_highest_2power(number: Int ) -> Int{
+        if (number < 8){
+            return 0
+        }
+        
+        var power_of_2 = 8
+        while( 2*power_of_2 <= number ){
+            power_of_2 = power_of_2*2
+        }
+        
+        return power_of_2
+    }
 }
