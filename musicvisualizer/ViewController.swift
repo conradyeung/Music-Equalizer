@@ -17,6 +17,11 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     var pickerDataSource = ["Band 1","Band 2","Band 3","Band 4","Band 5","Band 6","Band 7","Band 8"];
     @IBOutlet weak var bandPick: UIPickerView!
     @IBOutlet weak var VolumeSlider: UISlider!
+    @IBOutlet weak var SampleRate: UILabel!
+    @IBOutlet weak var FileLength: UILabel!
+    @IBOutlet weak var FFTSize: UILabel!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.bandPick.dataSource = self;
@@ -39,9 +44,12 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
 //        print(arr_out)
         // Do any additional setup after loading the view, typically from a nib.
         
-        player.readFilesIntoNodes("tone_3", file_extension: "wav")
+        player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
         player.split_audio_into_subnodes()
         player.playNodes()
+        SampleRate.text = "Sample Rate: " + String(player.sample_rate!) + "HZ"
+        FileLength.text = "File Length: " + String(player.file_length)
+        FFTSize.text = "FFT Size: " + String(player.FFT_size)
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,22 +58,23 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     }
     
     @IBAction func sliderChange(sender: UISlider) {
-        scale = Float(sender.value/100.0)
+        scale = Float(sender.value/10.0)
+        player.sub_players[select].volume = scale
     }
     func onDisplayLink() {
         // Get the frequency values.
         let frequencies = UnsafeMutablePointer<Float>.alloc(8)
         for i in 0...7{
-            frequencies[i] = Float(i+1)/100
+            frequencies[i] = player.sub_players[i].volume/20
+            //print(frequencies[i])
         }
-        frequencies[select] = frequencies[select]*Float(scale)
         // Wrapping the UI changes in a CATransaction block like this prevents animation/smoothing.
         CATransaction.begin()
         CATransaction.setAnimationDuration(0)
         CATransaction.setDisableActions(true)
         
         // Set the dimension of every frequency bar.
-        let originY:CGFloat = self.view.frame.size.height - 100
+        let originY:CGFloat = self.view.frame.size.height - 120
         let width:CGFloat = (self.view.frame.size.width - 47) / 8
         var frame:CGRect = CGRectMake(20, 0, width, 0)
         for n in 0...7 {
@@ -93,6 +102,7 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         select = row
+        print(row)
     }
 }
 

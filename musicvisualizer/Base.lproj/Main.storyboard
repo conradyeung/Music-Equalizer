@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -18,23 +19,52 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cju-df-g2T">
-                                <rect key="frame" x="7" y="466" width="305" height="134"/>
+                                <rect key="frame" x="7" y="478" width="305" height="122"/>
                                 <connections>
                                     <outlet property="dataSource" destination="8bC-Xf-vdC" id="YqB-bN-090"/>
                                     <outlet property="delegate" destination="8bC-Xf-vdC" id="32O-bD-qgO"/>
                                 </connections>
                             </pickerView>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="100" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="ghp-eW-xB6">
-                                <rect key="frame" x="318" y="518" width="118" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="10" minValue="0.0" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="ghp-eW-xB6">
+                                <rect key="frame" x="332" y="501" width="122" height="31"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="114" id="Z2P-yk-wh1"/>
+                                    <constraint firstAttribute="width" constant="118" id="Z2P-yk-wh1"/>
                                 </constraints>
                                 <connections>
                                     <action selector="sliderChange:" destination="BYZ-38-t0r" eventType="valueChanged" id="3Y1-mi-oeH"/>
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Volume Control" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aWh-j6-Bet">
-                                <rect key="frame" x="316" y="564" width="118" height="21"/>
+                                <rect key="frame" x="334" y="559" width="118" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SampleRate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dW2-XZ-XuM">
+                                <rect key="frame" x="20" y="65" width="250" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="Tmb-Ee-QMZ"/>
+                                    <constraint firstAttribute="height" constant="21" id="Uff-ph-9pk"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File Length" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WBl-ft-qou">
+                                <rect key="frame" x="20" y="102" width="279" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="NA7-3v-Bcr"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FFT Size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GOY-xI-AnF">
+                                <rect key="frame" x="20" y="142" width="237" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="237" id="bXJ-Bo-rOt"/>
+                                    <constraint firstAttribute="height" constant="21" id="oqm-Td-jUY"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -42,18 +72,28 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="WBl-ft-qou" firstAttribute="leading" secondItem="GOY-xI-AnF" secondAttribute="leading" id="0hD-QY-b8T"/>
                             <constraint firstItem="aWh-j6-Bet" firstAttribute="trailing" secondItem="ghp-eW-xB6" secondAttribute="trailing" id="2CJ-8T-ZcX"/>
-                            <constraint firstItem="ghp-eW-xB6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="77" id="GkZ-3h-knt"/>
-                            <constraint firstItem="aWh-j6-Bet" firstAttribute="top" secondItem="ghp-eW-xB6" secondAttribute="bottom" constant="16" id="MOE-4m-g7U"/>
-                            <constraint firstItem="ghp-eW-xB6" firstAttribute="leading" secondItem="Cju-df-g2T" secondAttribute="trailing" constant="8" id="Ml4-bR-IeJ"/>
+                            <constraint firstItem="dW2-XZ-XuM" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="45" id="4No-VW-bnf"/>
+                            <constraint firstItem="ghp-eW-xB6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="93" id="GkZ-3h-knt"/>
+                            <constraint firstItem="WBl-ft-qou" firstAttribute="top" secondItem="dW2-XZ-XuM" secondAttribute="bottom" constant="16" id="Hg8-Is-xcf"/>
+                            <constraint firstItem="aWh-j6-Bet" firstAttribute="top" secondItem="ghp-eW-xB6" secondAttribute="bottom" constant="28" id="MOE-4m-g7U"/>
+                            <constraint firstItem="ghp-eW-xB6" firstAttribute="leading" secondItem="Cju-df-g2T" secondAttribute="trailing" constant="22" id="Ml4-bR-IeJ"/>
                             <constraint firstItem="Cju-df-g2T" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="7" id="VMy-yp-IEf"/>
                             <constraint firstAttribute="bottom" secondItem="Cju-df-g2T" secondAttribute="bottom" id="Ztg-dM-CdR"/>
-                            <constraint firstItem="Cju-df-g2T" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="446" id="gbl-1s-H4O"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aWh-j6-Bet" secondAttribute="bottom" constant="15" id="ghH-HB-5fd"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ghp-eW-xB6" secondAttribute="bottom" constant="52" id="on9-ud-Z2P"/>
+                            <constraint firstItem="Cju-df-g2T" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="458" id="gbl-1s-H4O"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aWh-j6-Bet" secondAttribute="bottom" constant="20" id="ghH-HB-5fd"/>
+                            <constraint firstItem="WBl-ft-qou" firstAttribute="leading" secondItem="dW2-XZ-XuM" secondAttribute="leading" id="hUf-48-aHq"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ghp-eW-xB6" secondAttribute="bottom" constant="69" id="on9-ud-Z2P"/>
+                            <constraint firstItem="GOY-xI-AnF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="qPv-H6-h5A"/>
+                            <constraint firstItem="GOY-xI-AnF" firstAttribute="top" secondItem="WBl-ft-qou" secondAttribute="bottom" constant="19" id="usE-4V-QcM"/>
+                            <constraint firstItem="WBl-ft-qou" firstAttribute="centerX" secondItem="Cju-df-g2T" secondAttribute="centerX" id="wlb-sB-24a"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="FFTSize" destination="GOY-xI-AnF" id="AlB-9e-jOI"/>
+                        <outlet property="FileLength" destination="WBl-ft-qou" id="Anh-KI-gcK"/>
+                        <outlet property="SampleRate" destination="dW2-XZ-XuM" id="K9s-zl-hxY"/>
                         <outlet property="VolumeSlider" destination="ghp-eW-xB6" id="Wfa-45-eZf"/>
                         <outlet property="bandPick" destination="Cju-df-g2T" id="clF-fK-Lms"/>
                     </connections>
