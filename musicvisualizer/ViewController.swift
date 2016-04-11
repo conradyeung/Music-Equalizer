@@ -27,9 +27,6 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         let imageView = PlayButton
-        if(playing){
-            PlayButton.image = UIImage(named: "pause.png")
-        }
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:Selector("imageTapped:"))
         imageView.userInteractionEnabled = true
         imageView.addGestureRecognizer(tapGestureRecognizer)
@@ -63,7 +60,13 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         //play when play button pressed
         if(!playing){
             playing = true
+            PlayButton.image = UIImage(named: "pause.png")
             player.playNodes()
+        }else{
+            //pause
+            playing = false
+            PlayButton.image = UIImage(named: "play.png")
+            player.pauseNodes()
         }
     }
     override func didReceiveMemoryWarning() {
