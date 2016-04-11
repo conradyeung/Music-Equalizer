@@ -1,5 +1,10 @@
 # Music-Equalizer
 
+CMPT 365
+
+iOS9
+xCode 7
+
 Contents:
 SplitterPlayer.swift
   - audio buffers setup
@@ -15,3 +20,6 @@ ViewController.swift
   - play/pause buttons
   - volume control slider
   - frequency band selector
+
+How to use:
+Run application and modify frequency band volume levels using band selector and volume slider.
