@@ -2,7 +2,9 @@
 
 Contents:
 SplitterPlayer.swift
-  - audio buffer setup and playing
+  - audio buffers setup
+  - audio nodes play/pause
+  - fft size computation
   - fft/ifft function
       - frequency band splitting
       - magnitude scaling
@@ -10,3 +12,6 @@ SplitterPlayer.swift
 ViewController.swift
   - graphing volume levels
   - set ui values
+  - play/pause buttons
+  - volume control slider
+  - frequency band selector
