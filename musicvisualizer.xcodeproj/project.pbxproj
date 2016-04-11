@@ -223,7 +223,7 @@
 				TargetAttributes = {
 					79EA14C41C90EAD0001510A9 = {
 						CreatedOnToolsVersion = 7.2.1;
-						DevelopmentTeam = 9DGH56CWQC;
+						DevelopmentTeam = RRDJ24SQ9N;
 					};
 					79EA14D81C90EAD0001510A9 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -444,7 +444,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = musicvisualizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizer2;
+				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizerKHCY;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -458,7 +458,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = musicvisualizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizer2;
+				PRODUCT_BUNDLE_IDENTIFIER = visualizer.musicvisualizerKHCY;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};

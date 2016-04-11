@@ -121,7 +121,7 @@ class SplitterPlayer : NSObject {
         //Original data stored in a array to work with
         let original_data = Array(UnsafeBufferPointer(start: master_buffer!.floatChannelData[0], count:Int(master_buffer!.frameLength)))
         
-        print("file_length: \(file_length) \n FFT_size: \(FFT_size) \n divided: \(file_length/FFT_size) \n")
+        print("file_length: \(original_file_length) \n FFT_size: \(FFT_size) \n divided: \(file_length/FFT_size) \n")
         
         // This will split the file into segments of size FFT_size
         for i in 0...((file_length/FFT_size)-1){

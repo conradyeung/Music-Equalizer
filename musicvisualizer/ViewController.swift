@@ -46,7 +46,7 @@ class ViewController: UIViewController,UIPickerViewDataSource, UIPickerViewDeleg
         displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSRunLoopCommonModes)
     
         //audio player fft setup
-        player.readFilesIntoNodes("Bubba_converted", file_extension: "wav")
+        player.readFilesIntoNodes("Plastik_converted", file_extension: "wav")
         player.split_audio_into_subnodes()
         
         // Set label text
